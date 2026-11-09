@@ -1,0 +1,64 @@
+[project]
+name = "geyser"
+version = "0.1.0"
+description = "Geyser: agents that self-organize around tasks, reviews and a shared Library"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.30,<1",
+  "pydantic>=2.10,<3",
+  "httpx>=0.27,<1",
+  "typer>=0.15,<1",
+  "rich>=13,<15",
+  "jsonschema>=4,<5",
+  "portalocker>=3,<4",
+  "tomli-w>=1,<2",
+]
+
+[project.optional-dependencies]
+# Claude Code workers (Linux): the Agent SDK with its bundled Claude Code CLI.
+claude = ["claude-agent-sdk>=0.2,<0.3"]
+
+[project.scripts]
+geyser = "geyser.cli:app"
+
+[project.entry-points."geyser.domains"]
+general = "geyser.domains.general:GeneralPack"
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/geyser"]
+
+[dependency-groups]
+dev = [
+  "pytest>=8,<10",
+  "pytest-asyncio>=1,<2",
+  "ruff>=0.11,<1",
+  "mypy>=1,<2",
+  "types-jsonschema",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = [
+  "linux: needs a Linux host with a systemd user manager",
+]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+ignore = ["B008"]
+
+[tool.mypy]
+python_version = "3.13"
+check_untyped_defs = true
+ignore_missing_imports = true

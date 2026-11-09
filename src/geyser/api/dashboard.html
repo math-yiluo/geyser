@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geyser</title>
+<link rel="stylesheet" href="/dashboard.css">
+<script src="/dashboard.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="brand">Geyser</div>
+  <span id="project-name"></span>
+  <nav>
+    <div class="views" role="tablist" aria-label="View">
+      <button class="view-tab active" type="button" role="tab" data-view="agents">Agents</button>
+      <button class="view-tab" type="button" role="tab" data-view="tasks">Tasks</button>
+    </div>
+    <button id="open-requests" type="button">Requests</button>
+    <button id="open-activity" type="button">Activity</button>
+    <button id="open-setup" class="primary hidden" type="button">Set up Task 0</button>
+  </nav>
+</header>
+
+<div id="status-bar" class="status-bar" role="status" aria-live="polite">
+  <span class="status-dot" aria-hidden="true"></span>
+  <span id="status-text">Loading…</span>
+  <span id="run-actions" class="row"></span>
+</div>
+<div id="notice" role="alert"></div>
+
+<main>
+  <!-- Agents: each agent's turns, what it received, and messages to it (DESIGN.md 15.3). -->
+  <section id="agents-view" class="view">
+    <aside class="side" aria-label="Agents">
+      <div class="list-head">
+        <h2>Agents</h2>
+        <input id="agent-filter" placeholder="Find an agent or task…" aria-label="Find an agent or task">
+      </div>
+      <div id="agent-list" class="worker-list"></div>
+    </aside>
+    <section class="workspace" aria-label="Selected agent">
+      <div class="worker-head">
+        <div class="eyebrow">AGENT</div>
+        <div class="row">
+          <h1 id="agent-title">Select an agent</h1>
+          <span id="agent-badges" class="row"></span>
+          <span id="agent-actions" class="row right"></span>
+        </div>
+        <div id="agent-summary" class="muted"></div>
+      </div>
+      <section id="agent-requests" class="pinned-requests hidden" aria-label="Requests from this agent"></section>
+      <div id="history" class="history-area">
+        <div class="empty">
+          <h2>No agent selected</h2>
+          <p>Choose an agent to see its turns: what it received, what it said and the tools it called.</p>
+        </div>
+      </div>
+      <form id="compose" class="hidden">
+        <div id="queued" class="queued"></div>
+        <label for="message">Message this agent</label>
+        <textarea id="message" placeholder="Guidance, a question or a reference. Your messages carry the operator's authority."></textarea>
+        <div class="row">
+          <span class="muted">Delivered at its next turn, or steered into a turn in progress.</span>
+          <button class="primary right" type="submit">Send</button>
+        </div>
+      </form>
+    </section>
+  </section>
+
+  <!-- Tasks: two layers over the same tasks (DESIGN.md 15.4). -->
+  <section id="tasks-view" class="view hidden">
+    <section class="workspace" aria-label="Task relations">
+      <div class="tabs" role="tablist" aria-label="Layer">
+        <button class="tab active" type="button" role="tab" data-layer="publication">Publication</button>
+        <button class="tab" type="button" role="tab" data-layer="dependencies">Dependencies and waits</button>
+        <span id="layer-summary" class="muted right"></span>
+        <label id="hide-met-label" class="muted check hidden"><input id="hide-met" type="checkbox"> Hide what is met</label>
+      </div>
+      <div id="task-banners"></div>
+      <div id="layer" class="layer-area"></div>
+    </section>
+    <aside id="task-detail" class="detail" aria-label="Selected task">
+      <div class="empty small"><p>Select a task to see its contract, its executors and what links it to other tasks.</p></div>
+    </aside>
+  </section>
+</main>
+
+<dialog id="requests-dialog" aria-labelledby="requests-heading">
+  <div class="dialog-head"><h2 id="requests-heading">Requests to you</h2><button type="button" data-close>Close</button></div>
+  <div class="dialog-body">
+    <div id="requests-list" class="requests-grid"></div>
+    <h3>Messages to you</h3>
+    <div id="inbound-list"></div>
+  </div>
+</dialog>
+
+<dialog id="activity-dialog" aria-labelledby="activity-heading">
+  <div class="dialog-head"><h2 id="activity-heading">Activity</h2><button type="button" data-close>Close</button></div>
+  <div class="dialog-body">
+    <h3>Service notices</h3>
+    <div id="notices-list"></div>
+    <h3>Recent events</h3>
+    <div id="activity-list"></div>
+  </div>
+</dialog>
+
+<dialog id="setup-dialog" aria-labelledby="setup-heading">
+  <div class="dialog-head"><h2 id="setup-heading">Set up Task 0</h2><button type="button" data-close>Close</button></div>
+  <form id="setup-form" class="dialog-body">
+    <p class="muted">Task 0 is the project's goal. Agents decompose it into further tasks. Creating it starts nothing: the run starts only when you press Start.</p>
+    <label for="setup-title">Title</label>
+    <input id="setup-title" required maxlength="300">
+    <label for="setup-goal">Goal, including what counts as completion</label>
+    <textarea id="setup-goal" required></textarea>
+    <label for="setup-acceptance">Acceptance conditions, one per line</label>
+    <textarea id="setup-acceptance" required></textarea>
+    <div class="row setup-actions"><button class="primary right" type="submit">Create Task 0</button></div>
+  </form>
+</dialog>
+</body>
+</html>
